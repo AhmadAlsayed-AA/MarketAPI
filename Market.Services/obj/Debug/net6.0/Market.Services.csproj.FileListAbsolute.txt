@@ -1,0 +1,17 @@
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Services.deps.json
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Services.dll
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Services.pdb
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Data.dll
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Repository.dll
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Data.pdb
+/Users/ahmad/Projects/Market/Market.Services/bin/Debug/net6.0/Market.Repository.pdb
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.csproj.AssemblyReference.cache
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.AssemblyInfoInputs.cache
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.AssemblyInfo.cs
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.csproj.CoreCompileInputs.cache
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.csproj.CopyComplete
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.dll
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/refint/Market.Services.dll
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/Market.Services.pdb
+/Users/ahmad/Projects/Market/Market.Services/obj/Debug/net6.0/ref/Market.Services.dll

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Market.Data\Market.Data.csproj" />
+    <ProjectReference Include="..\Market.Repository\Market.Repository.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="BCrypt" />
+    <None Remove="BCrypt.Net" />
+    <None Remove="Authentication\" />
+    <None Remove="Microsoft.Extensions.Options" />
+    <None Remove="System.IdentityModel.Tokens.Jwt" />
+    <None Remove="Microsoft.IdentityModel.Tokens" />
+    <None Remove="Swashbuckle.AspNetCore.Filters" />
+    <None Remove="Authentication\JWT\" />
+    <None Remove="Helpers\" />
+    <None Remove="AutoMapper" />
+    <None Remove="BCrypt.Net-Next" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Authentication\" />
+    <Folder Include="Authentication\JWT\" />
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+</Project>
