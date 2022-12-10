@@ -14,13 +14,7 @@ namespace Market.Data.Users
 
         public string Password { get; set; }
 
-        public enum UserType
-        {
-            Customer,
-            Courier,
-            Market,
-            Admin,
-        }
+        public string UserType { get; set; }
     }
 }
 

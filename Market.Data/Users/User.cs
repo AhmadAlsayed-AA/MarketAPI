@@ -16,17 +16,25 @@ namespace Market.Data.Users
         public string PhoneNumber { get; set; }
 
         [JsonIgnore]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
 
-        public enum UserType
-        {
-            Customer,
-            Courier,
-            Market,
-            Admin,
-        }
+        [JsonIgnore]
+        public byte[] PasswordSalt { get; set; }
+
+        public string UserType { get; set; }
+
         //public ICollection<Order>? Orders { get; set; }
         public ICollection<Address> Addresses { get; set; }
+
+        public User( string name, string email, string phoneNumber, byte[] passwordHash, byte[] passwordSalt, string userType)
+        {
+            Name = name;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            PasswordHash = passwordHash;
+            PasswordSalt = passwordSalt;
+            UserType = userType;
+        }
     }
 }
 

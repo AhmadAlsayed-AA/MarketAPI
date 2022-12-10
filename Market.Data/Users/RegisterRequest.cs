@@ -20,14 +20,10 @@ namespace Market.Data.Users
         [Required]
         public string Password { get; set; }
 
-        public enum UserType
-        {
-            Customer,
-            Courier,
-            Market,
-            Admin,
-        }
-        
+        [Required]
+        public string UserType { get; set; }
+
+
 
 
     }

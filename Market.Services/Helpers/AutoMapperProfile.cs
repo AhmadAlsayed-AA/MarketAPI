@@ -1,13 +1,15 @@
 ﻿using System;
-using AutoMapper;
 using Market.Data.Users;
+using AutoMapper;
 
 namespace Market.Services.Helpers
 {
 	public class AutoMapperProfile : Profile
-    {
-		public AutoMapperProfile()
-		{
+	{
+        public AutoMapperProfile()
+        {
+            CreateMap<AuthResponse,User >();
+            // User -> AuthResponse
             CreateMap<User, AuthResponse>();
 
             // RegisterRequest -> User
@@ -26,6 +28,6 @@ namespace Market.Services.Helpers
                     }
                 ));
         }
-	}
+    }
 }
 

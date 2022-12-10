@@ -1,20 +1,27 @@
 ﻿using System;
-using AutoMapper;
-using BCrypt.Net;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using Market.Data.Users;
 using Market.Repository;
-using Market.Services.Authentication.JWT;
-using Market.Services.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Market.Services.Helpers;
+using System.Net.Mail;
+using System.Net;
+using AutoMapper;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Market.Services
 {
     public interface IUserService
     {
         public List<User> getAll();
-        public User get(int id);
-        public void register(RegisterRequest request);
+        public User getById(int id);
+        public User register(RegisterRequest request);
         public void update(int id,UpdateRequest request);
         public void delete(int id);
         public AuthResponse signIn(AuthRequest authRequest);
@@ -22,57 +29,85 @@ namespace Market.Services
 
     public class UserService: IUserService
 	{
-        private IJwtUtils _jwtUtils;
-        private readonly IMapper _mapper;
+        
+        
         private readonly IConfiguration _configuration;
         private readonly MarketContext _context;
-        public UserService(MarketContext context, IConfiguration configuration, IJwtUtils jwtUtils,IMapper mapper)
-		{
+        private readonly IMapper _mapper;
+
+        public UserService(MarketContext context, IConfiguration configuration, IMapper mapper)
+        {
             _context = context;
-            _jwtUtils = jwtUtils;
+            _configuration = configuration;
             _mapper = mapper;
         }
 
-        public void register(RegisterRequest request)
+        
+
+        public User register(RegisterRequest request)
         {
             // validate
-            if (_context.Users.Any(x => x.Email == request.Email))
-                throw new AppException("Email '" + request.Email + "' is already taken");
+            
+            try {
+                if (!Validation.IsValidEmail(request.Email))
+                    throw new HttpRequestException();
+                if (!Validation.IsPhoneNumber(request.PhoneNumber))
+                    throw new HttpRequestException("Phone Number not valid.");
+                if (_context.Users.Any(x => x.Email == request.Email))
+                    throw new HttpRequestException("Email is already taken.");
+                if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
+                    throw new HttpRequestException("PhoneNumber is already taken.");
+                }
+            catch (NullReferenceException e) {
+                throw new HttpRequestException("Values cannot be null.");
+            }
+
+
+            // hash password
+            createPasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             // map model to new user object
             var user = _mapper.Map<User>(request);
 
-            // hash password
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
             // save user
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            return user;
         }
 
         public void delete(int id)
         {
-            _context.Users.Remove(get(id));
+            _context.Users.Remove(getById(id));
             _context.SaveChanges();
            
         }
 
         public void update(int id,UpdateRequest request)
         {
-            var user = get(id);
+            var user = _context.Users.Find(id); ;
 
             // validate
-            if (request.Email != user.Email && _context.Users.Any(x => x.Email == request.Email))
-                throw new AppException("Email '" + request.Email + "' is already taken");
+            if (!Validation.IsValidEmail(request.Email))
+                throw new HttpRequestException("Email not valid.");
+            if (!Validation.IsPhoneNumber(request.PhoneNumber))
+                throw new HttpRequestException("Phone Number not valid.");
+            if (_context.Users.Any(x => x.Email == request.Email))
+                throw new HttpRequestException("Email is already taken.");
+            if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
+                throw new HttpRequestException("PhoneNumber is already taken.");
 
             // hash password if it was entered
-            if (!string.IsNullOrEmpty(request.Password))
-                user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            if (!string.IsNullOrEmpty(request.Password)) {
+                createPasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+            }
+            var response = _mapper.Map(request, user);
 
             // copy model to user and save
-            _mapper.Map(request, user);
-            _context.Users.Update(user);
+
             _context.SaveChanges();
 
         }
@@ -83,7 +118,7 @@ namespace Market.Services
             return _context.Users.AsNoTracking().Include(i => i.Addresses).ToList(); ;
         }
 
-        public User get(int id)
+        public User getById(int id)
         {
             //.Include(x => x.Orders)
             return _context.Users.AsNoTracking().Include(i => i.Addresses).SingleOrDefault(u => u.Id == id);
@@ -92,13 +127,60 @@ namespace Market.Services
         public AuthResponse signIn(AuthRequest authRequest)
         {
             var user = _context.Users.SingleOrDefault(i => i.Email == authRequest.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(authRequest.Password, user.Password))
-                throw new AppException("Email or Password is incorrect");
+
+            if (user == null || !verifyPasswordHash(authRequest.Password, user.PasswordHash, user.PasswordSalt))
+                return null;
 
             var response = _mapper.Map<AuthResponse>(user);
-            response.Token = _jwtUtils.GenerateToken(user);
+            response.Token = generateToken(user);
+
             return response;
         }
+
+        private string generateToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+                new Claim(ClaimTypes.Role, user.UserType),
+            };
+
+
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration.GetSection("Jwt:Issuer").Value,
+                audience: _configuration.GetSection("Jwt:Audience").Value,
+                claims: claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("Jwt:Key").Value)), SecurityAlgorithms.HmacSha256)
+            );
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwtToken;
+
+        }
+
+        private void createPasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)); 
+            }
+        }
+        private bool verifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
+
     }
     
 }

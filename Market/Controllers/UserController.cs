@@ -8,8 +8,8 @@ using AutoMapper;
 using Market.Data;
 using Market.Data.Users;
 using Market.Services;
-using Market.Services.Authentication;
-using Market.Services.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -22,60 +22,90 @@ namespace MarketAPI.Controllers
     {
         private IUserService _userService;
         private IMapper _mapper;
-        private readonly AppSettings _appSettings;
 
         public UserController(
-            IUserService userService,
-            IMapper mapper,
-            IOptions<AppSettings> appSettings)
+            IUserService userService, IMapper mapper)
+      
         {
-            _userService = userService;
             _mapper = mapper;
-            _appSettings = appSettings.Value;
+
+            _userService = userService;
+            
         }
 
-        [AllowAnonymous]
+       
         [HttpPost("SignIn")]
-        public IActionResult signIn(AuthRequest model)
+        
+        public async Task<ActionResult<User>> signIn(AuthRequest model)
         {
             var response = _userService.signIn(model);
+
+            if (response is null)
+                return NotFound("Email or Password are Incorrect");
+            
             return Ok(response);
         }
 
-        [AllowAnonymous]
         [HttpPost("Register")]
-        public IActionResult Register(RegisterRequest model)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterRequest model)
         {
-            _userService.register(model);
-            return Ok(new { message = "Registration successful" });
+            return Ok(_userService.register(model));
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
         public IActionResult GetAll()
         {
             var users = _userService.getAll();
             return Ok(users);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
         public IActionResult GetById(int id)
         {
-            var user = _userService.get(id);
+            var user = _userService.getById(id);
+            if (user is null)
+                return NotFound("User Does not Exist");
+
             return Ok(user);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
         public IActionResult Update(int id, UpdateRequest model)
         {
-            _userService.update(id, model);
-            return Ok(new { message = "User updated successfully" });
+            try
+            {
+                
+                _userService.update(id, model);
+                return Ok(new { message = "User updated successfully" });
+
+            }
+            catch(HttpRequestException e)
+            {
+                return Conflict(e.Message);
+
+            }  catch (NullReferenceException n)
+            {
+                return NotFound("User Does not Exist");
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
         public IActionResult Delete(int id)
         {
-            _userService.delete(id);
-            return Ok(new { message = "User deleted successfully" });
+            try
+            {
+                _userService.delete(id);
+                return Ok(new { message = "User deleted successfully" });
+
+            }
+            catch (Exception e)
+            {
+                return NotFound("User does not Exist");
+            }
         }
     }
 }
