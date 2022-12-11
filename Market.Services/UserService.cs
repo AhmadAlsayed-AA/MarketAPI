@@ -47,21 +47,16 @@ namespace Market.Services
         public User register(RegisterRequest request)
         {
             // validate
-            
-            try {
-                if (!Validation.IsValidEmail(request.Email))
-                    throw new HttpRequestException();
-                if (!Validation.IsPhoneNumber(request.PhoneNumber))
-                    throw new HttpRequestException("Phone Number not valid.");
-                if (_context.Users.Any(x => x.Email == request.Email))
-                    throw new HttpRequestException("Email is already taken.");
-                if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
-                    throw new HttpRequestException("PhoneNumber is already taken.");
-                }
-            catch (NullReferenceException e) {
-                throw new HttpRequestException("Values cannot be null.");
-            }
 
+            if (!Validation.IsValidEmail(request.Email))
+                throw new HttpRequestException("Email Not Valid");
+            //if (Validation.IsPhoneNumber(request.PhoneNumber))
+            //    throw new HttpRequestException("Phone Number not valid.");
+            if (_context.Users.Any(x => x.Email == request.Email))
+                throw new HttpRequestException("Email is already taken.");
+            if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
+                throw new HttpRequestException("PhoneNumber is already taken.");
+  
 
             // hash password
             createPasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -69,7 +64,8 @@ namespace Market.Services
             // map model to new user object
             var user = _mapper.Map<User>(request);
 
-
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
             // save user
             _context.Users.Add(user);
             _context.SaveChanges();

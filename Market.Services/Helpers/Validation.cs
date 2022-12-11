@@ -24,7 +24,7 @@ namespace Market.Services.Helpers
 
         public static bool IsPhoneNumber(string number)
         {
-            return Regex.Match(number, @"^(\+[0-9]{9})$").Success;
+            return Regex.Match(number, @"^(0(\d{3}) (\d{3}) (\d{2}) (\d{2}))$", RegexOptions.IgnoreCase).Success;
         }
     }
 }

@@ -5,8 +5,8 @@ namespace Market.Data.Users
 {
     public class RegisterRequest
     {
-        [Key]
-        public int Id { get; set; }
+        
+        
 
         [Required]
         public string Name { get; set; }

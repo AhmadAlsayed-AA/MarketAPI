@@ -49,7 +49,18 @@ namespace MarketAPI.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<User>> Register([FromBody] RegisterRequest model)
         {
-            return Ok(_userService.register(model));
+            try {
+                return Ok(_userService.register(model));
+
+            } catch (NullReferenceException e)
+            {
+                return BadRequest("Values Cannot Be null");
+            }
+            catch (HttpRequestException h)
+            {
+                return Conflict(h.Message);
+            }
+            
         }
 
         [HttpGet("GetAll")]

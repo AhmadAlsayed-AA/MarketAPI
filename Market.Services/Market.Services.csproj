@@ -13,7 +13,6 @@
   <ItemGroup>
     <None Remove="BCrypt" />
     <None Remove="BCrypt.Net" />
-    <None Remove="Authentication\" />
     <None Remove="Microsoft.Extensions.Options" />
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Microsoft.IdentityModel.Tokens" />
@@ -24,7 +23,6 @@
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Authentication\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>

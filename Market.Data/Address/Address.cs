@@ -1,0 +1,51 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Market.Data.Users;
+
+namespace Market.Data
+{
+    public class Address
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Title { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+
+        [Required]
+        public double Lat { get; set; }
+
+        [Required]
+        public double Long { get; set; }
+
+        [Required]
+        public string Country { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        [Required]
+        public string District { get; set; }
+
+        [Required]
+        public string Street { get; set; }
+
+        [Required]
+        public int BuildingNumber { get; set; }
+
+        [Required]
+        public int FloorNumber { get; set; }
+
+        [Required]
+        public int ApartmentNumber { get; set; }
+
+        [Required]
+        public int UserId { get; set; }
+
+        public User User { get; set; }
+
+    }
+}
+
