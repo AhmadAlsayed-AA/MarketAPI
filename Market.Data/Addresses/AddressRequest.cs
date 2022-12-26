@@ -39,7 +39,7 @@ namespace Market.Data.Addresses
         [Required]
         public int ApartmentNumber { get; set; }
 
-        [Required]
+        
         public int UserId { get; set; }
     }
 }

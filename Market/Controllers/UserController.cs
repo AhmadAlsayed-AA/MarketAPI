@@ -47,7 +47,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<User>> Register([FromBody] RegisterRequest model)
+        public async Task<ActionResult<User>> Register(RegisterRequest model)
         {
             try {
                 return Ok(_userService.register(model));
@@ -71,7 +71,7 @@ namespace MarketAPI.Controllers
             return Ok(users);
         }
 
-        [HttpGet("GetById/{id}")]
+        [HttpGet("GetById")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
         public IActionResult GetById(int id)
         {
@@ -82,15 +82,18 @@ namespace MarketAPI.Controllers
             return Ok(user);
         }
 
-        [HttpPut("Update/{id}")]
+        [HttpPut("Update")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
-        public IActionResult Update(int id, UpdateRequest model)
+        public async Task<ActionResult<User>> Update(int id, UpdateRequest model)
         {
             try
             {
+                var user = _userService.getById(id);
+                if (user is null)
+                    return NotFound("User Does not Exist");
+
                 
-                _userService.update(id, model);
-                return Ok(new { message = "User updated successfully" });
+                return Ok(_userService.update(id, model));
 
             }
             catch(HttpRequestException e)
@@ -103,7 +106,7 @@ namespace MarketAPI.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("Delete")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
         public IActionResult Delete(int id)
         {

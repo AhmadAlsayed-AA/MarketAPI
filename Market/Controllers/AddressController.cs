@@ -15,7 +15,6 @@ namespace MarketAPI.Controllers
     {
         // GET: /<controller>/
         private readonly IAddressService _addressService;
-        
 
         public AddressController(IAddressService addressService)
 
@@ -25,8 +24,6 @@ namespace MarketAPI.Controllers
 
         }
 
-
-       
         [HttpPost("CreateAddress")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
         public async Task<ActionResult> Create( AddressRequest model)
@@ -56,7 +53,7 @@ namespace MarketAPI.Controllers
             return Ok(addresses);
         }
 
-        [HttpGet("GetById/{id}")]
+        [HttpGet("GetById")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
         public IActionResult GetById(int id)
         {
@@ -66,7 +63,7 @@ namespace MarketAPI.Controllers
 
             return Ok(address);
         }
-        [HttpGet("GetByUserId/{id}")]
+        [HttpGet("GetByUserId")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
         public IActionResult GetByUserId(int id)
         {
@@ -77,13 +74,20 @@ namespace MarketAPI.Controllers
             return Ok(addresses);
         }
 
-        [HttpPut("Update/{id}")]
+        [HttpGet("GetNearestAddress")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
+        public IActionResult GetNearestAddress(UserLocation userLocation)
+        {
+            return Ok(GetNearestAddress(userLocation));
+        }
+
+
+        [HttpPut("Update")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
         public IActionResult Update(int id, AddressUpdateRequest model)
         {
             try
             {
-
                 _addressService.update(id, model);
                 return Ok(new { message = "Address updated successfully" });
 
@@ -99,8 +103,8 @@ namespace MarketAPI.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer,ADMIN")]
+        [HttpDelete("Delete")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
         public IActionResult Delete(int id)
         {
             try

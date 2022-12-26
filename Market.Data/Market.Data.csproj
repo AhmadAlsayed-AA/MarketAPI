@@ -11,5 +11,23 @@
     <None Remove="Microsoft.IdentityModel.Tokens" />
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Swashbuckle.AspNetCore.Filters" />
+    <None Remove="Stores\" />
+    <None Remove="Microsoft.AspNetCore.Http" />
+    <None Remove="Microsoft.AspNetCore.Http.Features" />
+    <None Remove="Couriers\" />
+    <None Remove="HelperModels\" />
+    <None Remove="HelperModels\LocalEnums\" />
+    <None Remove="Customers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Stores\" />
+    <Folder Include="Couriers\" />
+    <Folder Include="HelperModels\" />
+    <Folder Include="HelperModels\LocalEnums\" />
+    <Folder Include="Customers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 </Project>

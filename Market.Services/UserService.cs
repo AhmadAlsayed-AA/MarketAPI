@@ -14,23 +14,27 @@ using System.Net.Mail;
 using System.Net;
 using AutoMapper;
 using System.IdentityModel.Tokens.Jwt;
+using Market.Data.Addresses;
 
 namespace Market.Services
 {
     public interface IUserService
     {
         public List<User> getAll();
+
         public User getById(int id);
+        
         public User register(RegisterRequest request);
-        public void update(int id,UpdateRequest request);
+
+        public User update(int id,UpdateRequest request);
+
         public void delete(int id);
+
         public AuthResponse signIn(AuthRequest authRequest);
     }
 
     public class UserService: IUserService
 	{
-        
-        
         private readonly IConfiguration _configuration;
         private readonly MarketContext _context;
         private readonly IMapper _mapper;
@@ -50,8 +54,8 @@ namespace Market.Services
 
             if (!Validation.IsValidEmail(request.Email))
                 throw new HttpRequestException("Email Not Valid");
-            //if (Validation.IsPhoneNumber(request.PhoneNumber))
-            //    throw new HttpRequestException("Phone Number not valid.");
+            if (!Validation.IsPhoneNumber(request.PhoneNumber))
+                throw new HttpRequestException("Phone Number not valid.");
             if (_context.Users.Any(x => x.Email == request.Email))
                 throw new HttpRequestException("Email is already taken.");
             if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
@@ -80,44 +84,45 @@ namespace Market.Services
            
         }
 
-        public void update(int id,UpdateRequest request)
+        public User update(int id,UpdateRequest request)
         {
             var user = _context.Users.Find(id); ;
 
+            var response = _mapper.Map(request, user);
             // validate
-            if (!Validation.IsValidEmail(request.Email))
+            if (!Validation.IsValidEmail(response.Email))
                 throw new HttpRequestException("Email not valid.");
-            if (!Validation.IsPhoneNumber(request.PhoneNumber))
+            if (!Validation.IsPhoneNumber(response.PhoneNumber))
                 throw new HttpRequestException("Phone Number not valid.");
-            if (_context.Users.Any(x => x.Email == request.Email))
+            if (_context.Users.Any(x => x.Email == response.Email) && response.Email != user.Email)
                 throw new HttpRequestException("Email is already taken.");
-            if (_context.Users.Any(x => x.PhoneNumber == request.PhoneNumber))
+            if (_context.Users.Any(x => x.PhoneNumber == response.PhoneNumber) && response.PhoneNumber != user.PhoneNumber)
                 throw new HttpRequestException("PhoneNumber is already taken.");
 
             // hash password if it was entered
             if (!string.IsNullOrEmpty(request.Password)) {
                 createPasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
+                response.PasswordHash = passwordHash;
+                response.PasswordSalt = passwordSalt;
             }
-            var response = _mapper.Map(request, user);
+            
 
             // copy model to user and save
 
             _context.SaveChanges();
-
+            return response;
         }
 
         public List<User> getAll()
         {
             //.Include(x => x.Orders)
-            return _context.Users.AsNoTracking().Include(i => i.Addresses).ToList(); ;
+            return _context.Users.AsNoTracking().ToList(); ;
         }
 
         public User getById(int id)
         {
             //.Include(x => x.Orders)
-            return _context.Users.AsNoTracking().Include(i => i.Addresses).SingleOrDefault(u => u.Id == id);
+            return _context.Users.AsNoTracking().SingleOrDefault(u => u.Id == id);
         }
 
         public AuthResponse signIn(AuthRequest authRequest)

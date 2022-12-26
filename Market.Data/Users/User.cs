@@ -24,8 +24,6 @@ namespace Market.Data.Users
 
         public string UserType { get; set; }
 
-        //public ICollection<Order>? Orders { get; set; }
-        public ICollection<Address> Addresses { get; set; }
 
         
     }

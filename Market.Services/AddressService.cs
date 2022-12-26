@@ -7,6 +7,9 @@ using Market.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+using Geolocation;
+using Market.Services.Helpers;
+
 namespace Market.Services
 {
     public interface IAddressService
@@ -14,7 +17,8 @@ namespace Market.Services
         public List<Address> getAll();
         public Address getById(int id);
         public IEnumerable<Address> getByUserId(int id);
-        public void create(AddressRequest request);
+        public Address getNearestAddress(UserLocation userLocation);
+        public Address create(AddressRequest request);
         public void update(int id, AddressUpdateRequest request);
         public void delete(int id);
     }
@@ -31,17 +35,18 @@ namespace Market.Services
             _mapper = mapper;
         }
 
-        public void create(AddressRequest request)
+        public Address create(AddressRequest request)
         {
             //checks if values are null
-            foreach(var prop in request.GetType().GetProperties())
-            {
-                if (prop.GetValue(request, null).Equals(null))
-                    throw new NullReferenceException();
-            }
+            //foreach(var prop in request.GetType().GetProperties())
+            //{
+            //    if (prop.GetValue(request, null).Equals(null))
+            //        throw new NullReferenceException();
+            //}
             var address = _mapper.Map<Address>(request);
             _context.Addresses.Add(address);
             _context.SaveChanges();
+            return address;
         }
 
         public void delete(int id)
@@ -63,6 +68,24 @@ namespace Market.Services
         public IEnumerable<Address> getByUserId(int id)
         {
             return _context.Addresses.ToList().Where(a => a.UserId == id);
+        }
+
+        public Address getNearestAddress(UserLocation userLocation)
+        {
+            Address nearstAddress = null;
+            double nearestDistance = double.MaxValue;
+            foreach (Address address in _context.Addresses.ToList())
+            {
+                double distance = Location.distanceInKilometers(userLocation, address);
+                if (distance < nearestDistance)
+                {
+                    nearstAddress = address;
+                    nearestDistance = distance;
+                }
+                    
+            }
+            return nearstAddress;
+            
         }
 
         public void update(int id, AddressUpdateRequest request)

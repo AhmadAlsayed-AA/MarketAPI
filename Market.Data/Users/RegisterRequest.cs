@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using static Market.Services.Helpers.LocalEnums.Enums;
 
 namespace Market.Data.Users
 {
@@ -21,10 +23,9 @@ namespace Market.Data.Users
         public string Password { get; set; }
 
         [Required]
-        public string UserType { get; set; }
-
-
-
+        [EnumDataType(typeof(UserTypes))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public UserTypes UserType { get; set; }
 
     }
 }
