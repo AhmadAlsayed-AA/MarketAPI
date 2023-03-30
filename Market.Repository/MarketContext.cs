@@ -30,7 +30,7 @@ namespace Market.Repository
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=tcp:ahmadalsayed.database.windows.net,1433;Initial Catalog=MarketDB;Persist Security Info=False;User ID=AhmadAlsayed;Password=A26744477a;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            optionsBuilder.UseSqlServer("Server=localhost; Database=MarketDb; User Id=sa; Password=Strong.Pwd-123");
             
         }
 

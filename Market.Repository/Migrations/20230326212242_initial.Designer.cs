@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Market.Repository.Migrations
 {
     [DbContext(typeof(MarketContext))]
-    [Migration("20221226184408_CreateUserTables")]
-    partial class CreateUserTables
+    [Migration("20230326212242_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -155,7 +155,12 @@ namespace Market.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Customers");
                 });
@@ -260,6 +265,17 @@ namespace Market.Repository.Migrations
                         .HasForeignKey("CourierId");
 
                     b.Navigation("Courier");
+                });
+
+            modelBuilder.Entity("Market.Data.Customers.Customer", b =>
+                {
+                    b.HasOne("Market.Data.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Market.Data.Stores.Store", b =>

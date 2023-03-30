@@ -4,14 +4,14 @@
     "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj": {}
   },
   "projects": {
-    "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj": {
+    "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj",
-        "projectName": "Market",
-        "projectPath": "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj",
+        "projectUniqueName": "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj",
+        "projectName": "Market.Data",
+        "projectPath": "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj",
         "packagesPath": "/Users/ahmad/.nuget/packages/",
-        "outputPath": "/Users/ahmad/Projects/Market/Market/obj/",
+        "outputPath": "/Users/ahmad/Projects/Market/Market.Data/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/ahmad/.nuget/NuGet/NuGet.Config"
@@ -38,6 +38,239 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
+            "Microsoft.AspNetCore.Http.Features": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj",
+        "projectName": "Market.Repository",
+        "projectPath": "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj",
+        "packagesPath": "/Users/ahmad/.nuget/packages/",
+        "outputPath": "/Users/ahmad/Projects/Market/Market.Repository/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ahmad/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj": {
+                "projectPath": "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ahmad/Projects/Market/Market.Services/Market.Services.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ahmad/Projects/Market/Market.Services/Market.Services.csproj",
+        "projectName": "Market.Services",
+        "projectPath": "/Users/ahmad/Projects/Market/Market.Services/Market.Services.csproj",
+        "packagesPath": "/Users/ahmad/.nuget/packages/",
+        "outputPath": "/Users/ahmad/Projects/Market/Market.Services/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ahmad/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj": {
+                "projectPath": "/Users/ahmad/Projects/Market/Market.Data/Market.Data.csproj"
+              },
+              "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj": {
+                "projectPath": "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "Azure.Identity": {
+              "target": "Package",
+              "version": "[1.8.0, )"
+            },
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.14.1, )"
+            },
+            "Geolocation": {
+              "target": "Package",
+              "version": "[1.2.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj",
+        "projectName": "Market",
+        "projectPath": "/Users/ahmad/Projects/Market/Market/MarketAPI.csproj",
+        "packagesPath": "/Users/ahmad/.nuget/packages/",
+        "outputPath": "/Users/ahmad/Projects/Market/Market/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ahmad/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj": {
+                "projectPath": "/Users/ahmad/Projects/Market/Market.Repository/Market.Repository.csproj"
+              },
+              "/Users/ahmad/Projects/Market/Market.Services/Market.Services.csproj": {
+                "projectPath": "/Users/ahmad/Projects/Market/Market.Services/Market.Services.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -62,7 +295,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
         }
       }
     }
