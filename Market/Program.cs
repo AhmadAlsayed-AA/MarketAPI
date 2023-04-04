@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,15 @@ builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    
+    options.AddPolicy(name:"NgOrigins" , builder =>
+    {
+        builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+    });
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddDbContext<MarketContext>(options =>
@@ -95,7 +105,7 @@ var app = builder.Build();
 //}
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseCors("NgOrigins");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
