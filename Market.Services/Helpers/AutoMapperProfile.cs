@@ -14,7 +14,7 @@ namespace Market.Services.Helpers
         {
             CreateMap<AuthResponse,User >();
             // User -> AuthResponse
-            CreateMap<User, AuthResponse>();
+            CreateMap<User, UserResponse>();
 
             CreateMap<AddressRequest, Address>();
             CreateMap<Address, AddressRequest>();

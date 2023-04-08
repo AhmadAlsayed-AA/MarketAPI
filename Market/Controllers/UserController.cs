@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Market.Data;
+using Market.Data.HelperModels;
 using Market.Data.Users;
 using Market.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,29 +22,44 @@ namespace MarketAPI.Controllers
     public class UserController : Controller
     {
         private IUserService _userService;
+        private ITokenService _tokenService;
         private IMapper _mapper;
 
         public UserController(
-            IUserService userService, IMapper mapper)
+            IUserService userService, IMapper mapper, ITokenService tokenService)
       
         {
             _mapper = mapper;
 
             _userService = userService;
-            
+            _tokenService = tokenService;
+
+
         }
 
        
         [HttpPost("SignIn")]
         
-        public async Task<ActionResult<User>> signIn(AuthRequest model)
+        public IActionResult signIn([FromBody]AuthRequest model)
         {
-            var response = _userService.signIn(model);
+            var user = _userService.signIn(model);
 
-            if (response is null)
-                return NotFound("Email or Password are Incorrect");
-            
-            return Ok(response);
+            if (user == null)
+            {
+                return Unauthorized(new ErrorResponse
+                {
+                    ErrorCode = "Unauthorized",
+                    Message = "Invalid username or password."
+                });
+            }
+
+            var token = _tokenService.GenerateToken(user);
+
+            return Ok(new AuthResponse
+            {
+                User = user,
+                Token = token
+            });
         }
 
         [HttpPost("Register")]

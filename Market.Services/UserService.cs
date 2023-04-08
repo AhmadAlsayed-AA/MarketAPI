@@ -30,7 +30,7 @@ namespace Market.Services
 
         public void delete(int id);
 
-        public AuthResponse signIn(AuthRequest authRequest);
+        public UserResponse signIn(AuthRequest authRequest);
     }
 
     public class UserService: IUserService
@@ -125,45 +125,20 @@ namespace Market.Services
             return _context.Users.AsNoTracking().SingleOrDefault(u => u.Id == id);
         }
 
-        public AuthResponse signIn(AuthRequest authRequest)
+        public UserResponse signIn(AuthRequest authRequest)
         {
             var user = _context.Users.SingleOrDefault(i => i.Email == authRequest.Email);
 
             if (user == null || !verifyPasswordHash(authRequest.Password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-            var response = _mapper.Map<AuthResponse>(user);
-            response.Token = generateToken(user);
+            var response = _mapper.Map<UserResponse>(user);
+            
 
             return response;
         }
 
-        private string generateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-                new Claim(ClaimTypes.Role, user.UserType),
-            };
-
-
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration.GetSection("Jwt:Issuer").Value,
-                audience: _configuration.GetSection("Jwt:Audience").Value,
-                claims: claims,
-                notBefore: DateTime.Now,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                    _configuration.GetSection("Jwt:Key").Value)), SecurityAlgorithms.HmacSha256)
-            );
-            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwtToken;
-
-        }
+        
 
         private void createPasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
