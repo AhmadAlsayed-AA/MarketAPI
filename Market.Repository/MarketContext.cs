@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Market.Data.Stores;
 using Market.Data.Couriers;
 using Market.Data.Customers;
+using Market.Data.Admins;
 
 namespace Market.Repository
 {
@@ -19,6 +20,8 @@ namespace Market.Repository
         public DbSet<Courier> Couriers { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CourierApplication> CourierApplications { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+
 
         public MarketContext()
         {

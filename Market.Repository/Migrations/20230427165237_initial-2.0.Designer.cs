@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Market.Repository.Migrations
 {
     [DbContext(typeof(MarketContext))]
-    [Migration("20230326212242_initial")]
-    partial class initial
+    [Migration("20230427165237_initial-2.0")]
+    partial class initial20
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -84,6 +84,24 @@ namespace Market.Repository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("Market.Data.Admins.Admin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("Market.Data.Couriers.Courier", b =>
@@ -238,6 +256,17 @@ namespace Market.Repository.Migrations
                         .WithMany("Addresses")
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("Market.Data.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Market.Data.Admins.Admin", b =>
+                {
                     b.HasOne("Market.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace MarketAPI.Controllers
+namespace MarketAPI.Controllers.UserControllers
 {
     [Route("[controller]")]
     public class AddressController : Controller
@@ -25,7 +25,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpPost("CreateAddress")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public async Task<ActionResult> Create( AddressRequest model)
         {
             try
@@ -46,7 +46,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN, OWNER")]
         public IActionResult GetAll()
         {
             var addresses = _addressService.getAll();
@@ -54,7 +54,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpGet("GetById")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public IActionResult GetById(int id)
         {
             var address = _addressService.getById(id);
@@ -64,7 +64,7 @@ namespace MarketAPI.Controllers
             return Ok(address);
         }
         [HttpGet("GetByUserId")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public IActionResult GetByUserId(int id)
         {
             var addresses = _addressService.getByUserId(id);
@@ -75,7 +75,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpGet("GetNearestAddress")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public IActionResult GetNearestAddress(UserLocation userLocation)
         {
             return Ok(GetNearestAddress(userLocation));
@@ -83,7 +83,7 @@ namespace MarketAPI.Controllers
 
 
         [HttpPut("Update")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public IActionResult Update(int id, AddressUpdateRequest model)
         {
             try
@@ -104,7 +104,7 @@ namespace MarketAPI.Controllers
         }
 
         [HttpDelete("Delete")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER,ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CUSTOMER, ADMIN, OWNER")]
         public IActionResult Delete(int id)
         {
             try

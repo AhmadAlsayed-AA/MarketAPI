@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using Azure.Core;
 using Azure.Storage.Blobs;
 using Market.Data.Addresses;
 using Market.Data.HelperModels;
@@ -8,31 +12,32 @@ using Market.Data.Users;
 using Market.Repository;
 using Market.Services.Helpers;
 using Market.Services.Helpers.FileUpload;
+using Market.Services.Helpers.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using static Market.Services.Helpers.LocalEnums.Enums;
 
 namespace Market.Services
 {
-	public interface IStoreService
-	{
-        public List<Store> getAll();
-        public Store getById(int id);
-        public void create(StoreRequest storeRequest);
-        public Store update(int id, StoreUpdateRequest request);
-        public void delete(int id);
-        public void changeIsActive(int id, bool isActive);
+    public interface IStoreService
+    {
+        Task<List<Store>> GetAll();
+        Task<Store> GetById(int id);
+        Task<Store> Create(StoreRequest storeRequest);
+        Task<Store> Update(int id, StoreUpdateRequest request);
+        Task Delete(int id);
     }
-	public class StoreService : IStoreService
-	{
-        private IUserService _userService;
-        private IAddressService _addressService;
+
+    public class StoreService : IStoreService
+    {
+        private readonly IUserService _userService;
+        private readonly IAddressService _addressService;
         private readonly IConfiguration _configuration;
         private readonly MarketContext _context;
         private readonly IMapper _mapper;
         public IUploadHelper _uploadHelper { get; set; }
 
         private string container = "stores";
-
 
         public StoreService(MarketContext context, IConfiguration configuration, IMapper mapper, IUserService userService, IAddressService addressService, IUploadHelper uploadHelper)
         {
@@ -44,68 +49,77 @@ namespace Market.Services
             _uploadHelper = uploadHelper;
         }
 
-        public void create(StoreRequest storeRequest)
+        public async Task<Store> Create(StoreRequest storeRequest)
         {
-            //register new user with store information
-            var account = _userService.register(storeRequest.RegisterRequest);
-            
-            Store newStore = new Store();
+            // Register new user with store information
+            try
+            {
 
-            newStore.UserId = account.Id;
-            _uploadHelper.UploadBlobFile(storeRequest.StoreImageFile, container);
-            newStore.ImagePath = storeRequest.StoreImageFile.FileName;
-            storeRequest.addressRequest.UserId = account.Id;
-            newStore.AddressId = _addressService.create(storeRequest.addressRequest).Id;
+                var registerRequest = _mapper.Map<RegisterRequest>(storeRequest.RegisterRequest);
+                registerRequest.UserType = UserTypes.STORE;
+                var account = await _userService.register(registerRequest);
 
-            _context.Stores.Add(newStore);
-            _context.SaveChanges();
+
+
+
+                Store newStore = new Store();
+
+                newStore.UserId = account.Id;
+                //_uploadHelper.UploadBlobFile(storeRequest.StoreImageFile, container);
+                newStore.ImagePath = storeRequest.StoreImageFile.FileName;
+                storeRequest.addressRequest.UserId = account.Id;
+                newStore.AddressId = (_addressService.create(storeRequest.addressRequest)).Id;
+
+                _context.Stores.Add(newStore);
+                await _context.SaveChangesAsync();
+
+                return newStore;
+            }
+            catch (ValidationException ex)
+            {
+                // Re-throw the exception with the original error messages
+                throw new ValidationException(ex.Errors);
+            }
 
         }
 
-        public void delete(int id)
+        public async Task Delete(int id)
         {
-            var store  = getById(id);
+            var store = await GetById(id);
 
             //_userService.delete(store.User.Id);
             _context.Stores.Remove(store);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public Store update(int id, StoreUpdateRequest request)
+        public async Task<Store> Update(int id, StoreUpdateRequest request)
         {
-            var store = _context.Stores.AsNoTracking().Include(i => i.Address).Include(x => x.User).SingleOrDefault(s => s.Id == id);
-            
-            _userService.update(store.User.Id, request.User);
-            _addressService.update(store.AddressId, request.Address);
+            var store = await _context.Stores.AsNoTracking().Include(i => i.Address).Include(x => x.User).SingleOrDefaultAsync(s => s.Id == id);
+
+            await _userService.update(store.User.Id, request.User);
+             _addressService.update(store.AddressId, request.Address);
             store = _mapper.Map(request, store);
-            if (request.Image != null)
-            {
-                _uploadHelper.DeleteBlob(store.ImagePath, container);
-                store.ImagePath = _uploadHelper.UploadBlobFile(request.Image, container);
-            }
+            //if (request.Image != null)
+            //{
+            //    _uploadHelper.DeleteBlob(store.ImagePath, container);
+            //    store.ImagePath = _uploadHelper.UploadBlobFile(request.Image, container);
+            //}
             var dbStore = _context.Stores.Single(a => a.Id == id);
             _context.Entry(dbStore).CurrentValues.SetValues(store);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return store;
         }
-        public List<Store> getAll()
+
+        public async Task<List<Store>> GetAll()
         {
-            return _context.Stores.AsNoTracking().Include(i => i.Address).Include(x => x.User).ToList();
+            return await _context.Stores.AsNoTracking().Include(i => i.Address).Include(x => x.User).ToListAsync();
         }
 
-        public Store getById(int id)
+        public async Task<Store> GetById(int id)
         {
-            return _context.Stores.AsNoTracking().Include(i => i.Address).Include(i => i.User).SingleOrDefault(u => u.Id == id);
-        }
-
-        public void changeIsActive(int id, bool isActive)
-        {
-            var store = _context.Stores.Find(id);
-            store.IsActive = isActive;
-            _context.SaveChanges();
+            return await _context.Stores.AsNoTracking().Include(i => i.Address).Include(i => i.User).SingleOrDefaultAsync(u => u.Id == id);
         }
     }
 }
-

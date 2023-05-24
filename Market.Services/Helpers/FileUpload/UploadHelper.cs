@@ -8,7 +8,7 @@ namespace Market.Services.Helpers.FileUpload
     public interface IUploadHelper
     {
         Task<BlobObject> GetBlobFile(string fileName, string container);
-        string UploadBlobFile(FileRequest file, string container);
+        Task<string> UploadBlobFile(FileRequest file, string container);
         void DeleteBlob(string fileName, string container);
         Task<List<string>> ListBlobs(string container);
 
@@ -81,7 +81,7 @@ namespace Market.Services.Helpers.FileUpload
             return lst;
         }
 
-        public string UploadBlobFile(FileRequest file, string container)
+        public async Task<string> UploadBlobFile(FileRequest file, string container)
         {
             client = _blobServiceClient.GetBlobContainerClient(container);
             var blobClient = client.GetBlobClient(file.FileName);

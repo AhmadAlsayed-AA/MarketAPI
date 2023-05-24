@@ -1,118 +1,126 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
-using Market.Data.Addresses;
 using Market.Data.Couriers;
-using Market.Data.HelperModels;
-using Market.Data.Stores;
 using Market.Data.Users;
 using Market.Repository;
 using Market.Services.Helpers.FileUpload;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using static Market.Services.Helpers.LocalEnums.Enums;
 
 namespace Market.Services
 {
-	public interface ICourierService
-	{
-        public List<Courier> getAll();
-        public Courier getById(int id);
-        public void create(CourierRequest request);
-        public Courier update(int id, CourierUpdateRequest request);
-        public void delete(int id);
-        public void changeIsActive(int id, bool isActive);
+    public interface ICourierService
+    {
+        Task<List<Courier>> GetAll();
+        Task<Courier> GetById(int id);
+        Task Create(CourierRequest request);
+        Task<Courier> Update(int id, CourierUpdateRequest request);
+        Task Delete(int id);
+        Task ChangeIsActive(int id, bool isActive);
     }
+
     public class CourierService : ICourierService
     {
-        private ICourierApplicationService _courierApplicationService;
-        private IUserService _userService;
-        private readonly IConfiguration _configuration;
+        private readonly ICourierApplicationService _courierApplicationService;
+        private readonly IUserService _userService;
         private readonly MarketContext _context;
         private readonly IMapper _mapper;
-        public IUploadHelper _uploadHelper { get; set; }
-        private string container = "couriers";
+        private readonly IUploadHelper _uploadHelper;
+        private readonly string _container = "couriers";
 
-        public CourierService(MarketContext context, IConfiguration configuration, IMapper mapper, IUserService userService, IUploadHelper uploadHelper, ICourierApplicationService courierApplicationService)
+        public CourierService(
+            MarketContext context,
+            IMapper mapper,
+            IUserService userService,
+            IUploadHelper uploadHelper,
+            ICourierApplicationService courierApplicationService)
         {
             _courierApplicationService = courierApplicationService;
             _userService = userService;
             _context = context;
-            _configuration = configuration;
             _mapper = mapper;
             _uploadHelper = uploadHelper;
         }
-        public void create(CourierRequest request)
+
+        public async Task Create(CourierRequest request)
         {
-            var account = _userService.register(request.RegisterRequest);
+            var registerRequest = _mapper.Map<RegisterRequest>(request.RegistrationDTO);
+            registerRequest.UserType = UserTypes.COURIER;
+            var account = await _userService.register(registerRequest);
 
-            Courier newCourier = new Courier();
+            var newCourier = new Courier
+            {
+                UserId = account.Id,
+                IsActive = false,
+                //PersonalPhoto = await _uploadHelper.UploadBlobFile(request.PersonalPhoto, _container)
+                PersonalPhoto = " asdas",
 
-            newCourier.UserId = account.Id;
-            newCourier.IsActive = false;
-            newCourier.PersonalPhoto = _uploadHelper.UploadBlobFile(request.PersonalPhoto, container);
+            };
 
-            _context.Couriers.Add(newCourier);
-            _context.SaveChanges();
+            await _context.Couriers.AddAsync(newCourier);
+            await _context.SaveChangesAsync();
 
-            createApplication(newCourier.Id, request);
-            
-
+            await CreateApplication(newCourier.Id, request);
         }
 
-        public void delete(int id)
+        public async Task Delete(int id)
         {
-            var courier = getById(id);
-
-
+            var courier = await GetById(id);
             _context.Couriers.Remove(courier);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public List<Courier> getAll()
+        public async Task<List<Courier>> GetAll()
         {
-            return _context.Couriers.AsNoTracking().Include(x => x.User).ToList();
+            return await _context.Couriers.AsNoTracking().Include(x => x.User).ToListAsync();
         }
 
-        public Courier getById(int id)
+        public async Task<Courier> GetById(int id)
         {
-            return _context.Couriers.AsNoTracking().Include(x => x.User).SingleOrDefault(i => i.Id == id);
+            return await _context.Couriers.AsNoTracking().Include(x => x.User).SingleOrDefaultAsync(i => i.Id == id);
         }
 
-        public Courier update(int id, CourierUpdateRequest request)
+        public async Task<Courier> Update(int id, CourierUpdateRequest request)
         {
-            var courier = _context.Couriers.AsNoTracking().Include(x => x.User).SingleOrDefault(s => s.Id == id);
-            _userService.update(courier.User.Id, request.User);
-           
+            var courier = await _context.Couriers.AsNoTracking().Include(x => x.User).SingleOrDefaultAsync(s => s.Id == id);
+            await _userService.update(courier.User.Id, request.User);
+
             courier = _mapper.Map(request, courier);
 
-            var dbCourier = _context.Couriers.Single(a => a.Id == id);
-
+            var dbCourier = await _context.Couriers.SingleAsync(a => a.Id == id);
             _context.Entry(dbCourier).CurrentValues.SetValues(courier);
-
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return courier;
         }
-        public void changeIsActive(int id, bool isActive)
+
+        public async Task ChangeIsActive(int id, bool isActive)
         {
-            var store = _context.Couriers.Find(id);
-            store.IsActive = isActive;
-            _context.SaveChanges();
+            var courier = await _context.Couriers.FindAsync(id);
+            courier.IsActive = isActive;
+            await _context.SaveChangesAsync();
         }
 
-        private void createApplication(int id, CourierRequest request)
+        private async Task CreateApplication(int id, CourierRequest request)
         {
-            CourierApplication courierApplication = new CourierApplication();
-            courierApplication.CourierId = id;
-            courierApplication.PassportPhoto = _uploadHelper.UploadBlobFile(request.PassportPhoto,container);
-            courierApplication.RegisterationPhoto = _uploadHelper.UploadBlobFile(request.RegisterationPhoto, container);
-            courierApplication.VehiclePhoto = _uploadHelper.UploadBlobFile(request.VehiclePhoto, container);
-            courierApplication.VehicleType = (int)request.VehicleType;
-            courierApplication.ApprovalStatus = 0;
+            var courierApplication = new CourierApplication
+            {
+                CourierId = id,
+                //PassportPhoto = await _uploadHelper.UploadBlobFile(request.PassportPhoto, _container),
+                //RegisterationPhoto = await _uploadHelper.UploadBlobFile(request.RegisterationPhoto, _container),
+                //VehiclePhoto = await _uploadHelper.UploadBlobFile(request.VehiclePhoto, _container),
+                //VehicleType = (int)request.VehicleType,
+                PassportPhoto = "not yet",
+                RegisterationPhoto = "not yet",
+                VehiclePhoto = "not yet",
+                VehicleType = request.VehicleType,
+                ApprovalStatus = CourierApprovalStatus.SENT
+            };
 
-            _courierApplicationService.create(courierApplication);
+            await _courierApplicationService.Create(courierApplication);
         }
-
-        
     }
 }
-

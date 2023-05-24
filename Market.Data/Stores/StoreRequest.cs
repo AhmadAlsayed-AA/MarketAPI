@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Market.Data.Addresses;
 using Market.Data.HelperModels;
+using Market.Data.Shared;
 using Market.Data.Users;
 
 namespace Market.Data.Stores
@@ -9,9 +10,8 @@ namespace Market.Data.Stores
 	public class StoreRequest
 	{
         [Required]
-        public RegisterRequest RegisterRequest { get; set; }
+        public RegistrationDTO RegisterRequest { get; set; }
 
-        [Required]
         public FileRequest StoreImageFile { get; set; }
 
         [Required]

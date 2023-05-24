@@ -12,6 +12,11 @@ namespace Market.Data.Users
         public string PhoneNumber { get; set; }
 
         public string UserType { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public string Token { get; set; }
+
     }
 }
 

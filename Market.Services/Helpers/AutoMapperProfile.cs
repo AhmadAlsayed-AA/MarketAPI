@@ -5,6 +5,8 @@ using AutoMapper;
 using Market.Data.Stores;
 using Market.Data.Couriers;
 using Market.Data.Customers;
+using static Market.Services.Helpers.LocalEnums.Enums;
+using Market.Data.Shared;
 
 namespace Market.Services.Helpers
 {
@@ -14,24 +16,39 @@ namespace Market.Services.Helpers
         {
             CreateMap<AuthResponse,User >();
             // User -> AuthResponse
-            CreateMap<User, UserResponse>();
+            
 
             CreateMap<AddressRequest, Address>();
             CreateMap<Address, AddressRequest>();
             // RegisterRequest -> User
             CreateMap<RegisterRequest, User>();
 
-            
-            
 
-            
 
-            // UpdateRequest -> User
+            CreateMap<RegistrationDTO, RegisterRequest>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+
             CreateMap<UpdateRequest, User>()
+    .ForMember(dest => dest.Name, opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Name)))
+    .ForMember(dest => dest.Email, opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Email)))
+    .ForMember(dest => dest.PhoneNumber, opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.PhoneNumber)))
+    .ForMember(dest => dest.Id, opt => opt.Ignore());// ignore PasswordHash property
+
+            CreateMap<UserResponse,User >()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
                     prop != null
                 ));
+            CreateMap<User, UserResponse>()
+                .ForAllMembers(x => x.Condition(
+                    (src, dest, prop) =>
+                    prop != null
+                ));
+
             // UpdateRequest -> User
             CreateMap<User, UpdateRequest>()
                 .ForAllMembers(x => x.Condition(
@@ -84,6 +101,9 @@ namespace Market.Services.Helpers
                     (src, dest, prop) =>
                     prop != null
                 ));
+            CreateMap<User, Customer>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src));
+
             CreateMap<CustomerUpdateRequest, Customer>()
                .ForAllMembers(x => x.Condition(
                    (src, dest, prop) =>

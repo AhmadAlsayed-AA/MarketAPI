@@ -24,8 +24,17 @@ namespace Market.Data.Users
 
         public string UserType { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
+        public bool IsActive { get; set; }
 
         
+
+        public User()
+        {
+            IsActive = true; // Set the default value of isActive to true
+        }
+
     }
 }
 

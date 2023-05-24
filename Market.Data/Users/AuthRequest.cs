@@ -3,12 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Market.Data.Users
 {
-	public class AuthRequest
+    public class AuthRequest
 	{
-        [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } // email or phone number
 
-        [Required]
         public string Password { get; set; }
     }
 }

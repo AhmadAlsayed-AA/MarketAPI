@@ -6,8 +6,9 @@ namespace Market.Data.Users
 {
 	public class AuthResponse
 	{
-        public string Token { get; set; }
         public UserResponse User { get; set; }
+        public string Token { get; set; }
+        
     }
 }
 

@@ -11,8 +11,7 @@ namespace Market.Services
 {
     public interface ITokenService
     {
-        string GenerateToken(UserResponse user);
-        bool ValidateToken(string token);
+        string GenerateToken(User user);
         string GetUserIdFromToken(string token);
     }
     public class TokenService : ITokenService
@@ -24,54 +23,34 @@ namespace Market.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(UserResponse user)
+        public string GenerateToken(User user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSecret"]);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            List<Claim> claims = new List<Claim>
             {
-                Subject = new ClaimsIdentity(new[]
-                {
+                new Claim("UserId", user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
                 new Claim(ClaimTypes.Role, user.UserType),
-            }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandler.WriteToken(token);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration.GetSection("Jwt:Issuer").Value,
+                audience: _configuration.GetSection("Jwt:Audience").Value,
+                claims: claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("Jwt:Key").Value)), SecurityAlgorithms.HmacSha256)
+            );
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwtToken;
 
         }
-
-        public bool ValidateToken(string token)
-        {
-            // Implementation to validate JWT toke
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSecret"]);
-
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                }, out SecurityToken validatedToken);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            
-        }
+        
 
         public string GetUserIdFromToken(string token)
         {

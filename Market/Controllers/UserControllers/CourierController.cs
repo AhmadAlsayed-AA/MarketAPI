@@ -9,10 +9,13 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Market.Services.Helpers.Validation;
 
-namespace MarketAPI.Controllers
+using System.Threading.Tasks;
+using ValidationException = Market.Services.Helpers.Validation.ValidationException;
+
+namespace MarketAPI.Controllers.UserControllers
 {
     [Route("[controller]")]
     public class CourierController : Controller
@@ -20,22 +23,23 @@ namespace MarketAPI.Controllers
         private ICourierService _courierService;
         private IMapper _mapper;
 
-        
         public CourierController(ICourierService courierService, IMapper mapper)
-		{
+        {
             _mapper = mapper;
-
             _courierService = courierService;
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult> CreateCourier(CourierRequest request)
+        public async Task<ActionResult> CreateCourier([FromBody] CourierRequest request)
         {
             try
             {
-                _courierService.create(request);
+                await _courierService.Create(request);
                 return Ok("Courier Created Successfully");
-
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { errors = ex.Errors });
             }
             catch (NullReferenceException e)
             {
@@ -45,54 +49,53 @@ namespace MarketAPI.Controllers
             {
                 return Conflict(h.Message);
             }
-
         }
+
         [HttpPut("Update")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "COURIER, ADMIN")]
-        public IActionResult Update([Required] int id, CourierUpdateRequest model)
+        public async Task<IActionResult> Update([Required] int id, CourierUpdateRequest model)
         {
             try
             {
-                return Ok(_courierService.update(id, model));
-
+                var updatedCourier = await _courierService.Update(id, model);
+                return Ok(updatedCourier);
             }
             catch (HttpRequestException e)
             {
                 return Conflict(e.Message);
-
             }
             catch (NullReferenceException n)
             {
                 return NotFound("Courier Does not Exist");
             }
         }
+
         [HttpGet("GetAll")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
-        public IActionResult GetAll()
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN, OWNER")]
+        public async Task<ActionResult> GetAll()
         {
-            var users = _courierService.getAll();
-            return Ok(users);
+            var couriers = await _courierService.GetAll();
+            return Ok(couriers);
         }
 
         [HttpGet("GetById")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "COURIER, ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "COURIER, ADMIN, OWNER")]
         public IActionResult GetById(int id)
         {
-            var user = _courierService.getById(id);
-            if (user is null)
+            var courier = _courierService.GetById(id);
+            if (courier is null)
                 return NotFound("Courier Does not Exist");
-            return Ok(user);
+            return Ok(courier);
         }
 
         [HttpDelete("Delete")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "ADMIN, OWNER")]
         public IActionResult Delete(int id)
         {
             try
             {
-                _courierService.delete(id);
+                _courierService.Delete(id);
                 return Ok(new { message = "Courier deleted successfully" });
-
             }
             catch (Exception e)
             {
@@ -101,4 +104,3 @@ namespace MarketAPI.Controllers
         }
     }
 }
-

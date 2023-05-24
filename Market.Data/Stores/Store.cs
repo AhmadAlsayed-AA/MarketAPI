@@ -15,8 +15,6 @@ namespace Market.Data.Stores
 
         public string ImagePath { get; set; }
 
-        public bool IsActive { get; set; } = true;
-
         [ForeignKey("AddressId")]
         public int AddressId { get; set; }
 

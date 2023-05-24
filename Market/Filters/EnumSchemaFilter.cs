@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MarketAPI.Filters
 {
-	public class EnumSchemaFilter : ISchemaFilter
+    public class EnumSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
@@ -19,4 +19,3 @@ namespace MarketAPI.Filters
         }
     }
 }
-

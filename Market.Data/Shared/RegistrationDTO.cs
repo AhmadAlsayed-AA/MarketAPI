@@ -1,15 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using static Market.Services.Helpers.LocalEnums.Enums;
 
-namespace Market.Data.Users
+namespace Market.Data.Shared
 {
-    public class RegisterRequest
-    {
-        
-        
-
+	public class RegistrationDTO
+	{
         [Required]
         public string Name { get; set; }
 
@@ -22,18 +17,12 @@ namespace Market.Data.Users
         [Required]
         public string Password { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(UserTypes))]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public UserTypes UserType { get; set; }
-
         public Boolean IsActive { get; set; }
 
-        public RegisterRequest()
+        public RegistrationDTO()
         {
             IsActive = true;
         }
-
     }
 }
 

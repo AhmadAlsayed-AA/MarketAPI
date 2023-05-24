@@ -12,6 +12,8 @@ namespace Market.Data.Users
         public string PhoneNumber { get; set; }
 
         public string Password { get; set; }
+
+        public Boolean isActive { get; set; }
     }
 }
 

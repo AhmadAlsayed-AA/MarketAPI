@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using static Market.Services.Helpers.LocalEnums.Enums;
 
 namespace Market.Data.Couriers
@@ -15,11 +16,11 @@ namespace Market.Data.Couriers
 
         public string VehiclePhoto { get; set; }
 
-        public int VehicleType { get; set; }
+        public VehicleTypes VehicleType { get; set; }
 
-        public int ApprovalStatus { get; set; }
+        public CourierApprovalStatus ApprovalStatus { get; set; }
 
-        public int? CourierId { get; set; } 
+        public int CourierId { get; set; } 
 
 		public Courier Courier { get; set; }
 	}

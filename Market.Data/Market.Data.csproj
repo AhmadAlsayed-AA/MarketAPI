@@ -18,6 +18,8 @@
     <None Remove="HelperModels\" />
     <None Remove="HelperModels\LocalEnums\" />
     <None Remove="Customers\" />
+    <None Remove="Admins\" />
+    <None Remove="Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Stores\" />
@@ -25,6 +27,8 @@
     <Folder Include="HelperModels\" />
     <Folder Include="HelperModels\LocalEnums\" />
     <Folder Include="Customers\" />
+    <Folder Include="Admins\" />
+    <Folder Include="Shared\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
