@@ -7,7 +7,7 @@ using AutoMapper;
 using Market.Data.Customers;
 using Market.Data.Shared;
 using Market.Data.Stores;
-using Market.Services;
+using Market.Services.UserServices;
 using Market.Services.Helpers.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

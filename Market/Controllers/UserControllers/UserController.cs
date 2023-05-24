@@ -8,7 +8,7 @@ using AutoMapper;
 using Market.Data;
 using Market.Data.HelperModels;
 using Market.Data.Users;
-using Market.Services;
+using Market.Services.UserServices;
 using Market.Services.Helpers.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -81,7 +81,7 @@ namespace MarketAPI.Controllers.UserControllers
 
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = " OWNER")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = " OWNER, ADMIN")]
         public async Task<ActionResult<User[]>> GetAll()
         {
             try
@@ -96,7 +96,7 @@ namespace MarketAPI.Controllers.UserControllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER, ADMIN")]
         public async Task<ActionResult> GetById(int id)
         {
             try
@@ -152,7 +152,7 @@ namespace MarketAPI.Controllers.UserControllers
         }
 
         [HttpPatch("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER, ADMIN")]
         public async Task<ActionResult> ChangeIsActive(int id, bool isActive)
         {
             try

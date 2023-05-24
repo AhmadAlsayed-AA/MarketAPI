@@ -10,7 +10,7 @@ using Market.Services.Helpers.Validation;
 using Microsoft.EntityFrameworkCore;
 using static Market.Services.Helpers.LocalEnums.Enums;
 
-namespace Market.Services
+namespace Market.Services.UserServices
 {
     public interface ICustomerService
     {

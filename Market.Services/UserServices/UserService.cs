@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using ValidationException = Market.Services.Helpers.Validation.ValidationException;
 using Azure.Core;
 
-namespace Market.Services
+namespace Market.Services.UserServices
 {
     public interface IUserService
     {

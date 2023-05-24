@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Geolocation;
 using Market.Services.Helpers;
 
-namespace Market.Services
+namespace Market.Services.UserServices
 {
     public interface IAddressService
     {

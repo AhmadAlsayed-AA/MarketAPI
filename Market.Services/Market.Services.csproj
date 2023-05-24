@@ -27,11 +27,15 @@
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Helpers\FileUpload\" />
     <None Remove="Helpers\Validation\" />
+    <None Remove="UserServices\" />
+    <None Remove="ProductServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Helpers\FileUpload\" />
     <Folder Include="Helpers\Validation\" />
+    <Folder Include="UserServices\" />
+    <Folder Include="ProductServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />

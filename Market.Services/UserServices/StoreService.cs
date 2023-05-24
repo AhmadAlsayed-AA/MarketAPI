@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using static Market.Services.Helpers.LocalEnums.Enums;
 
-namespace Market.Services
+namespace Market.Services.UserServices
 {
     public interface IStoreService
     {

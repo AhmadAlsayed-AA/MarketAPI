@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 
-namespace Market.Services
+namespace Market.Services.UserServices
 {
     public interface ITokenService
     {

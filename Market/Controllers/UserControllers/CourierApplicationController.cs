@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Market.Data.Couriers;
 using Market.Data.Stores;
-using Market.Services;
+using Market.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 using static Market.Services.Helpers.LocalEnums.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

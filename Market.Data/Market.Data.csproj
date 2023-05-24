@@ -20,6 +20,8 @@
     <None Remove="Customers\" />
     <None Remove="Admins\" />
     <None Remove="Shared\" />
+    <None Remove="Categories\" />
+    <None Remove="Products\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Stores\" />
@@ -29,6 +31,8 @@
     <Folder Include="Customers\" />
     <Folder Include="Admins\" />
     <Folder Include="Shared\" />
+    <Folder Include="Categories\" />
+    <Folder Include="Products\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />

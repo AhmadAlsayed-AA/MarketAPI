@@ -21,11 +21,13 @@
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="Filters\" />
     <None Remove="Controllers\UserControllers\" />
+    <None Remove="Controllers\ProductControllers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Filters\" />
     <Folder Include="Controllers\UserControllers\" />
+    <Folder Include="Controllers\ProductControllers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Market.Services\Market.Services.csproj">

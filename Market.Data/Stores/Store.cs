@@ -5,6 +5,7 @@ using Market.Data.Addresses;
 using System.Text.Json.Serialization;
 using Market.Data.Users;
 using Microsoft.AspNetCore.Http;
+using Market.Data.Products;
 
 namespace Market.Data.Stores
 {
@@ -23,6 +24,8 @@ namespace Market.Data.Stores
         public int? UserId { get; set; }
 
         public User User { get; set; }
+
+        public IEnumerable<Product> Products { get; set; }
     }
 }
 

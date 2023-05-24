@@ -7,6 +7,7 @@ using Market.Data.Couriers;
 using Market.Data.Customers;
 using static Market.Services.Helpers.LocalEnums.Enums;
 using Market.Data.Shared;
+using Market.Data.Categories;
 
 namespace Market.Services.Helpers
 {
@@ -16,7 +17,9 @@ namespace Market.Services.Helpers
         {
             CreateMap<AuthResponse,User >();
             // User -> AuthResponse
-            
+
+            CreateMap<Category, CategoryRequest>();
+            CreateMap<CategoryRequest, Category>();
 
             CreateMap<AddressRequest, Address>();
             CreateMap<Address, AddressRequest>();

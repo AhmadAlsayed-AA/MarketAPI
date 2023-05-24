@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Market.Data.Shared;
 using Market.Data.Users;
-using Market.Services;
+using Market.Services.UserServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

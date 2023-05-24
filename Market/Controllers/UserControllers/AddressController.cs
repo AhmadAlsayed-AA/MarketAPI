@@ -1,6 +1,6 @@
 ﻿
 using Market.Data.Addresses;
-using Market.Services;
+using Market.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

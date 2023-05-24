@@ -3,7 +3,7 @@ using AutoMapper;
 using Market.Data.Couriers;
 using Market.Data.Stores;
 using Market.Data.Users;
-using Market.Services;
+using Market.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Data;
