@@ -1,5 +1,6 @@
 ﻿using System;
 using Market.Data.Products;
+using Market.Data.Stores;
 
 namespace Market.Data.Categories
 {
@@ -14,7 +15,9 @@ namespace Market.Data.Categories
         public string ImageUrl { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        // One-to-Many Relationship: One category can have multiple products
+
+        public ICollection<Store> Stores { get; set; }
+
         public ICollection<Product> Products { get; set; }
     }
 }

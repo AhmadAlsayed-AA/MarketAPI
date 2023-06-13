@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Market.Data.Shared;
 using Market.Data.Users;
+using Market.Services.Helpers.Validation;
 using Market.Services.UserServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,20 @@ namespace MarketAPI.Controllers.UserControllers
             _adminService = adminService;
             _mapper = mapper;
 
+        }
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
+        public async Task<IActionResult> CreateAdmin([FromBody] RegistrationDTO request)
+        {
+            try
+            {
+                var customer = await _adminService.create(request);
+                return Ok(customer);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { errors = ex.Errors });
+            }
         }
         // GET: /<controller>/
         [HttpGet("GetAll")]
@@ -48,26 +63,6 @@ namespace MarketAPI.Controllers.UserControllers
 
         
 
-        [HttpPost("Create")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
-
-        public async Task<ActionResult<User>> Register(RegistrationDTO model)
-        {
-            try
-            {
-                return Ok(_adminService.create(model));
-
-            }
-            catch (NullReferenceException e)
-            {
-                return BadRequest("Values Cannot Be null");
-            }
-            catch (HttpRequestException h)
-            {
-                return Conflict(h.Message);
-            }
-
-        }
 
     }
 }

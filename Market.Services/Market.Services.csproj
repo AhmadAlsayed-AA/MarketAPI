@@ -29,6 +29,7 @@
     <None Remove="Helpers\Validation\" />
     <None Remove="UserServices\" />
     <None Remove="ProductServices\" />
+    <None Remove="OrderServices\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
@@ -36,6 +37,7 @@
     <Folder Include="Helpers\Validation\" />
     <Folder Include="UserServices\" />
     <Folder Include="ProductServices\" />
+    <Folder Include="OrderServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.0" />

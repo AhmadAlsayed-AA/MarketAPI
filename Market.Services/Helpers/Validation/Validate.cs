@@ -6,6 +6,8 @@ using Market.Data.Users;
 using Market.Repository;
 using Microsoft.EntityFrameworkCore;
 using Market.Services.Helpers.SecurityHelper;
+using Market.Data.Shared;
+
 namespace Market.Services.Helpers.Validation
 {
     public class Validate

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Market.Repository.Migrations
 {
     [DbContext(typeof(MarketContext))]
-    [Migration("20230524211452_InitialCreate0.6")]
-    partial class InitialCreate06
+    [Migration("20230525171036_001_InitialSchema")]
+    partial class _001_InitialSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,21 @@ namespace Market.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("CategoryStore", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoresId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "StoresId");
+
+                    b.HasIndex("StoresId");
+
+                    b.ToTable("CategoryStore");
+                });
 
             modelBuilder.Entity("Market.Data.Addresses.Address", b =>
                 {
@@ -211,6 +226,94 @@ namespace Market.Repository.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Market.Data.Orders.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("CourierId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Market.Data.Orders.OrderProduct", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<double>("UnitPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderProduct");
+                });
+
+            modelBuilder.Entity("Market.Data.Orders.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderStatuses");
+                });
+
             modelBuilder.Entity("Market.Data.Products.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -244,6 +347,12 @@ namespace Market.Repository.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Weight")
+                        .HasColumnType("float");
+
+                    b.Property<int>("WeightUnit")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -325,6 +434,21 @@ namespace Market.Repository.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CategoryStore", b =>
+                {
+                    b.HasOne("Market.Data.Categories.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Market.Data.Stores.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Market.Data.Addresses.Address", b =>
                 {
                     b.HasOne("Market.Data.Customers.Customer", null)
@@ -384,6 +508,71 @@ namespace Market.Repository.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Market.Data.Orders.Order", b =>
+                {
+                    b.HasOne("Market.Data.Addresses.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Market.Data.Couriers.Courier", "Courier")
+                        .WithMany("Orders")
+                        .HasForeignKey("CourierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Market.Data.Customers.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Market.Data.Stores.Store", "Store")
+                        .WithMany("Orders")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Courier");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Market.Data.Orders.OrderProduct", b =>
+                {
+                    b.HasOne("Market.Data.Orders.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Market.Data.Products.Product", "Product")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Market.Data.Orders.OrderStatus", b =>
+                {
+                    b.HasOne("Market.Data.Orders.Order", "Order")
+                        .WithMany("OrderStatuses")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Market.Data.Products.Product", b =>
                 {
                     b.HasOne("Market.Data.Categories.Category", "Category")
@@ -425,13 +614,34 @@ namespace Market.Repository.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Market.Data.Couriers.Courier", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Market.Data.Customers.Customer", b =>
                 {
                     b.Navigation("Addresses");
+
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Market.Data.Orders.Order", b =>
+                {
+                    b.Navigation("OrderProducts");
+
+                    b.Navigation("OrderStatuses");
+                });
+
+            modelBuilder.Entity("Market.Data.Products.Product", b =>
+                {
+                    b.Navigation("OrderProducts");
                 });
 
             modelBuilder.Entity("Market.Data.Stores.Store", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("Products");
                 });
 #pragma warning restore 612, 618

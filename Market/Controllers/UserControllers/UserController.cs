@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Market.Data.Shared;
+using static Market.Services.Helpers.LocalEnums.Enums;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,13 +63,16 @@ namespace MarketAPI.Controllers.UserControllers
         }
 
         [HttpPost("Register")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
-        public async Task<ActionResult<UserResponse>> Register([FromBody]RegisterRequest request)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER, ADMIN")]
+
+        public async Task<ActionResult<UserResponse>> Register([FromBody] RegistrationDTO request)
         {
             try
             {
-                var response = await _userService.register(request);
-                return Ok(response);
+                var registerRequest = _mapper.Map<RegisterRequest>(request);
+                registerRequest.UserType = UserTypes.OWNER;
+                var registeredUser = await _userService.register(registerRequest);
+                return Ok(registeredUser);
             }
             catch (ValidationException ex) 
             {
@@ -153,7 +158,7 @@ namespace MarketAPI.Controllers.UserControllers
 
         [HttpPatch("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER, ADMIN")]
-        public async Task<ActionResult> ChangeIsActive(int id, bool isActive)
+        public async Task<ActionResult> ChangeIsActive(int id,[FromBody] bool isActive)
         {
             try
             {

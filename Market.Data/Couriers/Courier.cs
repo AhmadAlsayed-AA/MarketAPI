@@ -1,4 +1,5 @@
 ﻿using System;
+using Market.Data.Orders;
 using Market.Data.Users;
 
 namespace Market.Data.Couriers
@@ -14,6 +15,8 @@ namespace Market.Data.Couriers
         public int UserId { get; set; }
 
 		public User User { get; set; }
+
+		public ICollection<Order> Orders { get; set; }
 	}
 }
 

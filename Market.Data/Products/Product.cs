@@ -1,6 +1,8 @@
 ﻿using System;
 using Market.Data.Categories;
+using Market.Data.Orders;
 using Market.Data.Stores;
+using static Market.Services.Helpers.LocalEnums.Enums;
 
 namespace Market.Data.Products
 {
@@ -16,6 +18,10 @@ namespace Market.Data.Products
 
         public string ImageUrl { get; set; }
 
+        public double? Weight { get; set; }
+
+        public WeightUnit WeightUnit { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public bool IsActive { get; set; }
@@ -25,6 +31,8 @@ namespace Market.Data.Products
 
         public int StoreId { get; set; }
         public Store Store { get; set; }
+
+        public ICollection<OrderProduct> OrderProducts { get; set; }
     }
 }
 

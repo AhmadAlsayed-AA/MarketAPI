@@ -83,8 +83,10 @@ namespace Market.Services.UserServices
                 _context.Users.Add(user);
 
                 await _context.SaveChangesAsync();
-
-                return _mapper.Map<UserResponse>(user);
+                var response = _mapper.Map<UserResponse>(user);
+                response.Token = _tokenService.GenerateToken(user);
+                return response ;
+                ;
             }
             
             catch (Exception e)

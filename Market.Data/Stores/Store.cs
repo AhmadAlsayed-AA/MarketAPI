@@ -6,6 +6,8 @@ using System.Text.Json.Serialization;
 using Market.Data.Users;
 using Microsoft.AspNetCore.Http;
 using Market.Data.Products;
+using Market.Data.Categories;
+using Market.Data.Orders;
 
 namespace Market.Data.Stores
 {
@@ -16,7 +18,6 @@ namespace Market.Data.Stores
 
         public string ImagePath { get; set; }
 
-        [ForeignKey("AddressId")]
         public int AddressId { get; set; }
 
         public Address Address { get; set; }
@@ -25,7 +26,11 @@ namespace Market.Data.Stores
 
         public User User { get; set; }
 
-        public IEnumerable<Product> Products { get; set; }
+        public ICollection<Category> Categories { get; set; }
+
+        public ICollection<Product> Products { get; set; }
+
+        public ICollection<Order> Orders { get; set; }
     }
 }
 

@@ -25,6 +25,20 @@ namespace Market.Services.Helpers.LocalEnums
             COURIER,
             CUSTOMER,
 		}
-	}
+        public enum DeliveryStatus
+        {
+            Pending,
+            Preparing,
+            OnTheWay,
+            Delivered,
+            Cancelled
+        }
+        public enum WeightUnit
+        {
+            Grams,
+            Kilograms,
+            Pounds
+        }
+    }
 }
 

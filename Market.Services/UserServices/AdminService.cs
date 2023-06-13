@@ -17,7 +17,8 @@ namespace Market.Services.UserServices
 
         public Admin getById(int id);
 
-        public Task<Admin> create(RegistrationDTO adminRequest);
+        public Task<Admin> create(RegistrationDTO request);
+
 
     }
 
@@ -33,6 +34,31 @@ namespace Market.Services.UserServices
             _mapper = mapper;
         }
 
+        public async Task<Admin> create(RegistrationDTO request)
+        {
+            var registerRequest = _mapper.Map<RegisterRequest>(request);
+            registerRequest.UserType = UserTypes.ADMIN;
+            var registeredUser = await _userService.register(registerRequest);
+
+            User user = await _context.Users.FindAsync(registeredUser.Id);
+
+            if (user == null)
+            {
+                user = _mapper.Map<User>(registeredUser);
+            }
+            else
+            {
+                _mapper.Map(registeredUser, user);
+            }
+
+            var newAdmin = new Admin { User = user };
+
+            await _context.Admins.AddAsync(newAdmin);
+            await _context.SaveChangesAsync();
+
+            return newAdmin;
+        }
+
         public List<Admin> getAll()
         {
             return _context.Admins.AsNoTracking().Include(x => x.User).ToList();
@@ -43,17 +69,7 @@ namespace Market.Services.UserServices
             return _context.Admins.AsNoTracking().Include(i => i.User).SingleOrDefault(u => u.Id == id);
         }
 
-        public async Task<Admin> create(RegistrationDTO request)
-        {
-            var registerRequest = _mapper.Map<RegisterRequest>(request);
-            registerRequest.UserType = UserTypes.ADMIN;
-            var account = await _userService.register(registerRequest);
-            Admin newAdmin = new Admin();
-            newAdmin.User = _mapper.Map<User>(account);
-            await _context.Admins.AddAsync(newAdmin);
-            await _context.SaveChangesAsync();
-            return newAdmin;
-        }
+        
     }
 
 }

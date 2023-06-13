@@ -1,5 +1,6 @@
 ﻿using System;
 using Market.Data.Addresses;
+using Market.Data.Orders;
 using Market.Data.Users;
 
 namespace Market.Data.Customers
@@ -13,7 +14,9 @@ namespace Market.Data.Customers
         public User User { get; set; }
 
         public ICollection<Address> Addresses { get; set; }
-        //public ICollection<Order>? Orders { get; set; }
+        public ICollection<Order> Orders { get; set; }
+
+
     }
 }
 

@@ -22,12 +22,14 @@
     <None Remove="Filters\" />
     <None Remove="Controllers\UserControllers\" />
     <None Remove="Controllers\ProductControllers\" />
+    <None Remove="Controllers\OrderControllers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Filters\" />
     <Folder Include="Controllers\UserControllers\" />
     <Folder Include="Controllers\ProductControllers\" />
+    <Folder Include="Controllers\OrderControllers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Market.Services\Market.Services.csproj">
